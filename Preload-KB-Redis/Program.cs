@@ -1,9 +1,11 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
+using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 using Redis.OM;
 using Redis.OM.Vectorizers;
+using StackExchange.Redis;
 
 // Get configuration object
 var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
@@ -11,14 +13,28 @@ var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 // Replace with your values.
 string embeddingDeploymentName = config["AOAI:embeddingDeploymentName"] ?? "";
 string endpoint = config["AOAI:endpoint"] ?? "";
-string apiKey = config["AOAI:apiKey"] ?? "";
-string redisConnectionString = config["Redis:connectionString"] ?? "";
-string semanticCacheRedisProvider = config["Redis:SemanticCacheAzureProvider"] ?? "";
 string cognitiveAccountName = config["AOAIResourceName"] ?? "";
+string redisEndpoint = config["Redis:endpoint"] ?? "";
 
 
-var _provider = new RedisConnectionProvider(semanticCacheRedisProvider);
-var cache = _provider.AzureOpenAISemanticCache(apiKey, cognitiveAccountName, embeddingDeploymentName, 1536, threshold: 0.30);
+//var _provider = new RedisConnectionProvider(semanticCacheRedisProvider);
+
+ConfigurationOptions options = new ConfigurationOptions
+{
+    EndPoints = { redisEndpoint }
+};
+
+// Configure for Azure with DefaultAzureCredential
+
+await options.ConfigureForAzureWithTokenCredentialAsync(new DefaultAzureCredential());
+
+// Connect to Redis using EntraId authentication
+var muxer = ConnectionMultiplexer.Connect(options);
+
+// Create Redis OM connection provider using the authenticated connection
+var _provider = new RedisConnectionProvider(muxer);
+
+var cache = _provider.AzureOpenAISemanticCache(null, cognitiveAccountName, embeddingDeploymentName, 1536, threshold: 0.30);
 
 await cache.StoreAsync("What is your refund policy for returning a product and get my money back from Contoso Outdoors?", "Contoso Outdoors is proud to offer a 30 day refund policy. Return unopened, unsused products within 30 days of purchase to any Contoso Outdoors store for a full refund.");
 await cache.StoreAsync("Refund policy", "Contoso Outdoors is proud to offer a 30 day refund policy. Return unopened, unsused products within 30 days of purchase to any Contoso Outdoors store for a full refund.");

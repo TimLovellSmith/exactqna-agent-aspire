@@ -20,3 +20,13 @@ resource aoai_CognitiveServicesOpenAIContributor 'Microsoft.Authorization/roleAs
   }
   scope: aoai
 }
+
+resource aoai_CognitiveServicesUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(aoai.id, principalId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'))
+  properties: {
+    principalId: principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+    principalType: principalType
+  }
+  scope: aoai
+}

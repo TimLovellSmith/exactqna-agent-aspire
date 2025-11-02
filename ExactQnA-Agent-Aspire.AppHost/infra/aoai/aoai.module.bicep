@@ -12,7 +12,7 @@ resource aoai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   properties: {
     customSubDomainName: toLower(take(concat('aoai', uniqueString(resourceGroup().id)), 24))
     publicNetworkAccess: 'Enabled'
-    disableLocalAuth: false
+    disableLocalAuth: true
   }
   sku: {
     name: 'S0'
@@ -72,14 +72,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
-resource keyVaultSecret_AoaiKey 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
-  parent: keyVault
-  name: 'aoai-key'
-  properties: {
-    value: aoai.listKeys().key1
-  }
-}
-
 var keyVaultSecretUserRoleId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')
 
 resource keyVaultSecretUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
@@ -96,7 +88,5 @@ output connectionString string = aoai.properties.endpoint
 output chatModelDeploymentId string = chatModelDeployment.name
 output embeddingModelDeploymentId string = embeddingModelDeployment.name
 output chatModelDeploymentName string = chatModelDeployment.name
-output aoaiKeyKvSecret string = keyVaultSecret_AoaiKey.properties.secretUri
 output name string = aoai.name
 output aoaiCustomSubDomainName string = aoai.properties.customSubDomainName
-output aoaiKey string = aoai.listKeys().key1

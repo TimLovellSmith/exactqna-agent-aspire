@@ -27,8 +27,6 @@ properties:
         value: '{{ .Env.REDIS_ENDPOINT}}'
       - name: connectionstrings--chatmodeldeployment
         value: '{{ .Env.AOAI_CHAT_MODEL_DEPLOYMENT_NAME }}'
-      - name: connectionstrings--aoai-key
-        value: '{{ .Env.AOAI_KEY }}'
       - name: connectionstrings--aoai-resource-name
         value: '{{ .Env.AOAI_NAME }}'
       - name: connectionstrings--embedding-model-id
@@ -56,8 +54,6 @@ properties:
             secretRef: connectionstrings--redis
           - name: ConnectionStrings__chatmodeldeployment
             secretRef: connectionstrings--chatmodeldeployment
-          - name: ConnectionStrings__aoai-key
-            secretRef: connectionstrings--aoai-key
           - name: ConnectionStrings__aoai-resource-name
             secretRef: connectionstrings--aoai-resource-name
           - name: ConnectionStrings__embedding-model-id
