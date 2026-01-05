@@ -24,7 +24,7 @@ The Exact QnA Agent returns consistency and accurate answer from the various que
     - Redis:connectionString <redis-domain-name:10000,password=redis-primary-key,ssl=True,abortConnect=False>
     - AOAIResourceName <i.e. myAOAIResource, just the name, without domain>
     - AOAI:endpoint <https://resource-name.openai.azure.com/>
-    - AOAI:embeddingDeploymentName <'embeddingModelDeployment', the embedding deployment's name that we confirmed above>
+    - AOAI:embeddingDeploymentName <embeddingModelDeployment><i.e. the embedding deployment's name that we confirmed above>
     - AOAI:apiKey <i.e. AOAI API Key>
 1. Run the *Preload-KB-Redis* project locally to load some information into Redis
 1. Bring up the ChatClient service and try asking questions like:
